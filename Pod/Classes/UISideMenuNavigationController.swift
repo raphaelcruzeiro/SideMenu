@@ -10,6 +10,7 @@ import UIKit
 open class UISideMenuNavigationController: UINavigationController {
     
     internal var originalMenuBackgroundColor: UIColor?
+    internal var parentNavigationController: UINavigationController?
     
     open override func awakeFromNib() {
         super.awakeFromNib()
@@ -145,10 +146,12 @@ open class UISideMenuNavigationController: UINavigationController {
         }
 
         let tabBarController = presentingViewController as? UITabBarController
-        guard let navigationController = (tabBarController?.selectedViewController ?? presentingViewController) as? UINavigationController else {
+        guard let navigationController = ((tabBarController?.selectedViewController ?? presentingViewController) as? UINavigationController ?? parentNavigationController) else {
             print("SideMenu Warning: attempt to push a View Controller from \(String(describing: presentingViewController.self)) where its navigationController == nil. It must be embedded in a Navigation Controller for this to work.")
             return
         }
+        
+        parentNavigationController = navigationController
         
         // To avoid overlapping dismiss & pop/push calls, create a transaction block where the menu
         // is dismissed after showing the appropriate screen
